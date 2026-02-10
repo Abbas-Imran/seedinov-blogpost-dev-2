@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { BlogList, BlogForm } from '@/components';
 import { Article, CreateArticleData, ApiResponse } from '@/types';
 
@@ -13,6 +14,17 @@ export default function Home() {
   const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [filter, setFilter] = useState<'all' | 'published' | 'unpublished'>('all');
   const [editArticle, setEditArticle] = useState<Article | null>(null);
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      router.push('/login');
+      router.refresh();
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
 
   const showNotification = (type: 'success' | 'error', message: string) => {
     setNotification({ type, message });
@@ -122,6 +134,12 @@ export default function Home() {
               <span className="px-3 py-1.5 bg-green-100 text-green-700 rounded-full text-sm font-medium">
                 Connected to Dev.to
               </span>
+              <button
+                onClick={handleLogout}
+                className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-sm font-medium transition-colors"
+              >
+                Logout
+              </button>
             </div>
           </div>
         </div>
